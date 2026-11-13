@@ -9,6 +9,120 @@
   <main>
     <h1>Bolívar Eco-Calculator</h1>
     <p>Calcula tu impacto ambiental semanal.</p>
+
+    <form id="eco-form">
+      <p>
+        <label for="transport">Medio de transporte al colegio</label>
+        <select id="transport">
+          <option value="bus">Bus</option>
+          <option value="car">Carro privado</option>
+          <option value="shared">Carro compartido</option>
+          <option value="active">Bicicleta / Caminando</option>
+        </select>
+      </p>
+
+      <p>
+        <label for="paper">Hojas de papel usadas al día</label>
+        <input id="paper" type="number" min="0" max="10000"
+               step="1" value="10" required>
+      </p>
+
+      <p>
+        <label for="recycling">Nivel de reciclaje</label>
+        <select id="recycling">
+          <option value="0">Nada</option>
+          <option value="0.5">A veces</option>
+          <option value="1">Siempre</option>
+        </select>
+      </p>
+
+      <button type="submit">Calcular impacto</button>
+    </form>
+
+    <section id="results" hidden aria-live="polite">
+      <h2>Resultado semanal</h2>
+      <p>CO2 estimado: <strong id="co2"></strong> kg por semana</p>
+      <p>Eco-Points: <strong id="points"></strong> / 100</p>
+    </section>
+
+    <details>
+      <summary>¿Cómo se calcula?</summary>
+      <p>
+        Modelo educativo con factores supuestos; no es una medición real.
+        Se consideran 5 días de colegio por semana.
+      </p>
+      <p>
+        Transporte por día: bus 2 kg, carro privado 5 kg,
+        carro compartido 2.5 kg y bicicleta/caminando 0 kg.
+        Cada hoja equivale a 0.005 kg.
+      </p>
+      <p>
+        Reciclar a veces reduce el impacto del papel un 25%;
+        reciclar siempre lo reduce un 50%.
+      </p>
+      <p>
+        Eco-Points: transporte (bus 20, carro privado 0,
+        compartido 30, bicicleta/caminando 50), más ahorro
+        de papel (30 menos las hojas diarias, mínimo 0),
+        más reciclaje (nada 0, a veces 10, siempre 20).
+      </p>
+    </details>
   </main>
+
+  <script>
+    const form = document.getElementById("eco-form");
+    const transport = document.getElementById("transport");
+    const paper = document.getElementById("paper");
+    const recycling = document.getElementById("recycling");
+    const results = document.getElementById("results");
+
+    const transportFactors = {
+      bus: 2,
+      car: 5,
+      shared: 2.5,
+      active: 0
+    };
+
+    const transportPoints = {
+      bus: 20,
+      car: 0,
+      shared: 30,
+      active: 50
+    };
+
+    form.addEventListener("submit", function (event) {
+      event.preventDefault();
+
+      if (!form.reportValidity()) return;
+
+      const sheets = Number(paper.value);
+      const recyclingLevel = Number(recycling.value);
+
+      if (!Number.isFinite(sheets) || !Number.isInteger(sheets) ||
+          sheets < 0 || sheets > 10000) {
+        return;
+      }
+
+      const transportCO2 = transportFactors[transport.value] * 5;
+      const paperCO2 = sheets * 5 * 0.005 *
+                       (1 - recyclingLevel * 0.5);
+      const totalCO2 = transportCO2 + paperCO2;
+
+      const ecoPoints = transportPoints[transport.value] +
+                        Math.max(0, 30 - sheets) +
+                        recyclingLevel * 20;
+
+      document.getElementById("co2").textContent =
+        totalCO2.toFixed(2);
+      document.getElementById("points").textContent =
+        Math.max(0, Math.min(100, ecoPoints));
+
+      results.hidden = false;
+    });
+
+    form.addEventListener("input", function () {
+      results.hidden = true;
+    });
+  </script>
 </body>
 </html>
