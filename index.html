@@ -7,7 +7,6 @@
   <style>
     * { box-sizing: border-box; }
     [hidden] { display: none !important; }
-
     body {
       margin: 0;
       min-height: 100vh;
@@ -16,20 +15,17 @@
       color: #163d32;
       background: linear-gradient(135deg, #ecfdf5, #d1fae5);
     }
-
     main { max-width: 850px; margin: auto; }
-
     header { text-align: center; margin-bottom: 30px; }
+    .language { max-width: 180px; margin: 0 0 25px auto; text-align: left; }
     .school {
       color: #047857;
       font-weight: bold;
       letter-spacing: 3px;
       font-size: 13px;
     }
-
     h1 { font-size: clamp(30px, 6vw, 44px); margin: 16px 0; }
-    .intro { color: #526d62; line-height: 1.6; }
-
+    .intro, .muted { color: #526d62; line-height: 1.6; }
     .card {
       background: white;
       padding: 30px;
@@ -38,16 +34,14 @@
       box-shadow: 0 12px 35px #064e3b0d;
       margin-bottom: 24px;
     }
-
     h2 { margin-top: 0; font-size: 23px; }
-    .fields {
+    .fields, .stats {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 24px;
     }
     .field:last-child { grid-column: 1 / -1; }
     label { display: block; font-weight: bold; margin-bottom: 10px; }
-
     input, select {
       width: 100%;
       padding: 15px;
@@ -57,7 +51,6 @@
       color: #163d32;
       font: inherit;
     }
-
     button {
       width: 100%;
       margin-top: 25px;
@@ -70,19 +63,8 @@
       font-weight: bold;
       cursor: pointer;
     }
-
     button:hover { background: #065f46; }
-    input:focus-visible, select:focus-visible, button:focus-visible,
-    summary:focus-visible {
-      outline: 3px solid #34d399;
-      outline-offset: 3px;
-    }
-
-    .stats {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px;
-    }
+    :focus-visible { outline: 3px solid #34d399; outline-offset: 3px; }
     .stat {
       background: #ecfdf5;
       border-radius: 16px;
@@ -96,117 +78,197 @@
       margin: 14px 0 8px;
     }
     .stat span { color: #526d62; }
-
+    .summary { line-height: 1.8; border-bottom: 1px solid #bce5d3; padding-bottom: 16px; }
     details { line-height: 1.7; color: #526d62; }
     summary { cursor: pointer; font-weight: bold; color: #047857; }
     footer { text-align: center; color: #526d62; font-size: 13px; }
-
     @media (max-width: 600px) {
       body { padding: 25px 14px; }
       .card { padding: 22px; }
       .fields, .stats { grid-template-columns: 1fr; }
+    }
+    @media print {
+      @page { margin: 18mm; }
+      body { background: white; padding: 0; color: #163d32; }
+      main { max-width: none; }
+      .language, .intro, #form-card, details, #print-button, footer {
+        display: none !important;
+      }
+      h1 { font-size: 28px; }
+      .card { box-shadow: none; border: 2px solid #047857; break-inside: avoid; }
+      .stats { grid-template-columns: 1fr 1fr; }
+      .stat strong { font-size: 32px; }
     }
   </style>
 </head>
 <body>
   <main>
     <header>
+      <div class="language">
+        <label for="language" data-i18n="language">Idioma</label>
+        <select id="language">
+          <option value="es">Español</option>
+          <option value="en">English</option>
+        </select>
+      </div>
       <p class="school">COLEGIO BOLÍVAR</p>
       <h1>Bolívar Eco-Calculator</h1>
-      <p class="intro">
-        Pequeños hábitos, grandes cambios.
-        Descubre tu impacto ambiental semanal.
-      </p>
+      <p class="intro" data-i18n="intro"></p>
     </header>
 
-    <section class="card">
-      <h2>Cuéntanos tus hábitos</h2>
+    <section id="form-card" class="card">
+      <h2 data-i18n="habits"></h2>
       <form id="eco-form">
         <div class="fields">
           <div class="field">
-            <label for="transport">Transporte al colegio</label>
+            <label for="transport" data-i18n="transport"></label>
             <select id="transport">
-              <option value="bus">Bus</option>
-              <option value="car">Carro privado</option>
-              <option value="shared">Carro compartido</option>
-              <option value="active">Bicicleta / Caminando</option>
+              <option value="bus" data-i18n="bus"></option>
+              <option value="car" data-i18n="car"></option>
+              <option value="shared" data-i18n="shared"></option>
+              <option value="active" data-i18n="active"></option>
             </select>
           </div>
-
           <div class="field">
-            <label for="paper">Hojas de papel usadas al día</label>
+            <label for="paper" data-i18n="paper"></label>
             <input id="paper" type="number" min="0" max="10000"
                    step="1" value="10" required>
           </div>
-
           <div class="field">
-            <label for="recycling">Nivel de reciclaje</label>
+            <label for="recycling" data-i18n="recycling"></label>
             <select id="recycling">
-              <option value="0">Nada</option>
-              <option value="0.5">A veces</option>
-              <option value="1">Siempre</option>
+              <option value="0" data-i18n="never"></option>
+              <option value="0.5" data-i18n="sometimes"></option>
+              <option value="1" data-i18n="always"></option>
             </select>
           </div>
         </div>
-        <button type="submit">Calcular mi impacto</button>
+        <button type="submit" data-i18n="calculate"></button>
       </form>
     </section>
 
     <section id="results" class="card" hidden aria-live="polite">
-      <h2>Tu resultado semanal</h2>
+      <h2 data-i18n="certificate"></h2>
+      <p id="report-summary" class="summary"></p>
       <div class="stats">
         <div class="stat">
-          <span>CO2 estimado</span>
+          <span data-i18n="co2"></span>
           <strong id="co2"></strong>
-          <span>kg por semana</span>
+          <span data-i18n="weekly"></span>
         </div>
         <div class="stat">
           <span>Eco-Points</span>
           <strong id="points"></strong>
-          <span>de 100 puntos</span>
+          <span data-i18n="outOf"></span>
         </div>
       </div>
+      <p class="muted" data-i18n="educational"></p>
+      <button id="print-button" type="button" data-i18n="print"></button>
     </section>
 
     <details class="card">
-      <summary>¿Cómo se calcula?</summary>
-      <p>
-        Modelo educativo con factores supuestos; no es una medición real.
-        Se consideran 5 días de colegio por semana.
-      </p>
-      <p>
-        Transporte por día: bus 2 kg, carro privado 5 kg,
-        carro compartido 2.5 kg y bicicleta/caminando 0 kg.
-        Cada hoja equivale a 0.005 kg.
-      </p>
-      <p>
-        Reciclar a veces reduce el impacto del papel un 25%;
-        reciclar siempre lo reduce un 50%.
-      </p>
-      <p>
-        Eco-Points: transporte (bus 20, carro privado 0,
-        compartido 30, bicicleta/caminando 50), más ahorro
-        de papel (30 menos las hojas diarias, mínimo 0),
-        más reciclaje (nada 0, a veces 10, siempre 20).
-      </p>
+      <summary data-i18n="how"></summary>
+      <p data-i18n="educational"></p>
+      <p data-i18n="factors"></p>
+      <p data-i18n="reduction"></p>
+      <p data-i18n="scoring"></p>
     </details>
-
-    <footer>Colegio Bolívar · Cada acción cuenta</footer>
+    <footer data-i18n="footer"></footer>
   </main>
 
   <script>
+    const translations = {
+      es: {
+        language: "Idioma",
+        intro: "Pequeños hábitos, grandes cambios. Descubre tu impacto ambiental semanal.",
+        habits: "Cuéntanos tus hábitos",
+        transport: "Transporte al colegio",
+        bus: "Bus",
+        car: "Carro privado",
+        shared: "Carro compartido",
+        active: "Bicicleta / Caminando",
+        paper: "Hojas de papel usadas al día",
+        recycling: "Nivel de reciclaje",
+        never: "Nada",
+        sometimes: "A veces",
+        always: "Siempre",
+        calculate: "Calcular mi impacto",
+        certificate: "Certificado de impacto ecológico semanal",
+        co2: "CO2 estimado",
+        weekly: "kg por semana",
+        outOf: "de 100 puntos",
+        print: "Imprimir / Guardar Reporte PDF",
+        how: "¿Cómo se calcula?",
+        educational: "Modelo educativo con factores supuestos; no es una medición real. Se consideran 5 días de colegio por semana.",
+        factors: "Transporte por día: bus 2 kg, carro privado 5 kg, compartido 2.5 kg y bicicleta/caminando 0 kg. Cada hoja equivale a 0.005 kg.",
+        reduction: "Reciclar a veces reduce el impacto del papel un 25%; reciclar siempre lo reduce un 50%.",
+        scoring: "Eco-Points: transporte (bus 20, carro privado 0, compartido 30, bicicleta/caminando 50), más ahorro de papel (30 menos las hojas diarias, mínimo 0), más reciclaje (nada 0, a veces 10, siempre 20).",
+        date: "Fecha",
+        footer: "Colegio Bolívar · Cada acción cuenta"
+      },
+      en: {
+        language: "Language",
+        intro: "Small habits, big changes. Discover your weekly environmental impact.",
+        habits: "Tell us about your habits",
+        transport: "Transport to school",
+        bus: "Bus",
+        car: "Private car",
+        shared: "Shared car",
+        active: "Cycling / Walking",
+        paper: "Sheets of paper used per day",
+        recycling: "Recycling level",
+        never: "Never",
+        sometimes: "Sometimes",
+        always: "Always",
+        calculate: "Calculate my impact",
+        certificate: "Weekly ecological impact certificate",
+        co2: "Estimated CO2",
+        weekly: "kg per week",
+        outOf: "out of 100 points",
+        print: "Print / Save PDF Report",
+        how: "How is it calculated?",
+        educational: "Educational model using assumed factors; this is not an actual measurement. Calculations cover 5 school days per week.",
+        factors: "Daily transport: bus 2 kg, private car 5 kg, shared car 2.5 kg and cycling/walking 0 kg. Each sheet represents 0.005 kg.",
+        reduction: "Recycling sometimes reduces paper impact by 25%; always recycling reduces it by 50%.",
+        scoring: "Eco-Points: transport (bus 20, private car 0, shared car 30, cycling/walking 50), plus paper savings (30 minus daily sheets, minimum 0), plus recycling (never 0, sometimes 10, always 20).",
+        date: "Date",
+        footer: "Colegio Bolívar · Every action counts"
+      }
+    };
+
     const form = document.getElementById("eco-form");
     const transport = document.getElementById("transport");
     const paper = document.getElementById("paper");
     const recycling = document.getElementById("recycling");
+    const language = document.getElementById("language");
     const results = document.getElementById("results");
+    const transportFactors = { bus: 2, car: 5, shared: 2.5, active: 0 };
+    const transportPoints = { bus: 20, car: 0, shared: 30, active: 50 };
+    const recyclingKeys = { "0": "never", "0.5": "sometimes", "1": "always" };
+    let report = null;
 
-    const transportFactors = {
-      bus: 2, car: 5, shared: 2.5, active: 0
-    };
-    const transportPoints = {
-      bus: 20, car: 0, shared: 30, active: 50
-    };
+    function renderReport() {
+      if (!report) return;
+      const t = translations[language.value];
+      const locale = language.value === "es" ? "es-CO" : "en-US";
+
+      document.getElementById("co2").textContent = report.co2.toFixed(2);
+      document.getElementById("points").textContent = report.points;
+      document.getElementById("report-summary").textContent =
+        `${t.date}: ${report.date.toLocaleDateString(locale)} · ` +
+        `${t.transport}: ${t[report.transport]} · ` +
+        `${t.paper}: ${report.sheets} · ` +
+        `${t.recycling}: ${t[recyclingKeys[report.recycling]]}`;
+    }
+
+    function applyLanguage() {
+      const t = translations[language.value];
+      document.documentElement.lang = language.value;
+      document.querySelectorAll("[data-i18n]").forEach(function (element) {
+        element.textContent = t[element.dataset.i18n];
+      });
+      renderReport();
+    }
 
     form.addEventListener("submit", function (event) {
       event.preventDefault();
@@ -218,26 +280,36 @@
       if (!Number.isFinite(sheets) || !Number.isInteger(sheets) ||
           sheets < 0 || sheets > 10000) return;
 
-      const transportCO2 = transportFactors[transport.value] * 5;
-      const paperCO2 = sheets * 5 * 0.005 *
-                       (1 - recyclingLevel * 0.5);
-      const totalCO2 = transportCO2 + paperCO2;
+      const co2 = transportFactors[transport.value] * 5 +
+        sheets * 5 * 0.005 * (1 - recyclingLevel * 0.5);
 
-      const ecoPoints = transportPoints[transport.value] +
-                        Math.max(0, 30 - sheets) +
-                        recyclingLevel * 20;
+      const points = transportPoints[transport.value] +
+        Math.max(0, 30 - sheets) + recyclingLevel * 20;
 
-      document.getElementById("co2").textContent =
-        totalCO2.toFixed(2);
-      document.getElementById("points").textContent =
-        Math.max(0, Math.min(100, ecoPoints));
+      report = {
+        transport: transport.value,
+        sheets: sheets,
+        recycling: recycling.value,
+        co2: co2,
+        points: Math.max(0, Math.min(100, points)),
+        date: new Date()
+      };
 
+      renderReport();
       results.hidden = false;
     });
 
     form.addEventListener("input", function () {
+      report = null;
       results.hidden = true;
     });
+
+    language.addEventListener("change", applyLanguage);
+    document.getElementById("print-button").addEventListener("click", function () {
+      if (report) window.print();
+    });
+
+    applyLanguage();
   </script>
 </body>
 </html>
